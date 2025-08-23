@@ -1,4 +1,4 @@
-import { clsx } from 'clsx';
+import clsx from 'clsx';
 import Card from '../Card/Card';
 import Button from '../Button/Button';
 import Loader from '../Loader/Loader';
@@ -15,7 +15,22 @@ const ItemList = ({
     return <Loader size="lg" className="py-12" />;
   }
 
+  if (!Array.isArray(items)) {
+    return (
+      <Card className="text-center py-12 bg-red-50">
+        <div className="text-6xl mb-4">⚠️</div>
+        <h3 className="text-xl font-semibold text-red-600 mb-2">
+          Invalid data format
+        </h3>
+        <p className="text-red-600">
+          Expected an array of items but received something else.
+        </p>
+      </Card>
+    );
+  }
+
   if (items.length === 0) {
+    console.log('ItemList: empty items array');
     return (
       <Card className="text-center py-12">
         <div className="text-6xl mb-4">📝</div>

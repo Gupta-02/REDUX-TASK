@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { fetchPostsRequest } from '../store/slices/postsSlice';
 import Navbar from '../components/Navbar/Navbar';
 import Button from '../components/Button/Button';
@@ -56,12 +57,82 @@ const PostCard = ({ post }) => (
 );
 
 export default function HomePage() {
-  const dispatch = useDispatch();
-  const { posts, loading } = useSelector((state) => state.posts);
+  const [allPosts, setAllPosts] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState("");
+  const [totalPosts, setTotalPosts] = React.useState(0);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const limit = 30; // DummyJSON default limit
 
+  // Fetch posts on initial load
   useEffect(() => {
-    dispatch(fetchPostsRequest({ skip: 0, limit: 6 }));
-  }, [dispatch]);
+    fetchAllPosts();
+  }, []);
+
+  // Function to fetch all posts
+  const fetchAllPosts = async () => {
+    setLoading(true);
+    setError("");
+    
+    try {
+      const response = await fetch('https://dummyjson.com/posts');
+      if (!response.ok) {
+        throw new Error(`Network error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data && data.posts && Array.isArray(data.posts)) {
+        setAllPosts(data.posts);
+        setTotalPosts(data.total || data.posts.length);
+      } else {
+        setAllPosts([]);
+        setError("No posts found in response.");
+      }
+    } catch (err) {
+      setError("Failed to fetch posts: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load more posts with pagination
+  const loadMorePosts = async () => {
+    if (allPosts.length >= totalPosts) return; // All posts loaded
+    
+    const nextPage = currentPage + 1;
+    const skip = currentPage * limit;
+    
+    setLoading(true);
+    
+    try {
+      const response = await fetch(`https://dummyjson.com/posts?skip=${skip}&limit=${limit}`);
+      if (!response.ok) {
+        throw new Error(`Network error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data && data.posts && Array.isArray(data.posts) && data.posts.length > 0) {
+        setAllPosts(prevPosts => [...prevPosts, ...data.posts]);
+        setCurrentPage(nextPage);
+      }
+    } catch (err) {
+      setError("Failed to load more posts: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Use Next.js router for navigation
+  const router = useRouter();
+  
+  // Handle Explore Posts button click - navigate to blog page
+  const handleExplorePosts = (e) => {
+    e.preventDefault();
+    // Navigate to blog page using Next.js router
+    router.push('/blog');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -78,9 +149,21 @@ export default function HomePage() {
             Share your thoughts and connect with readers worldwide.
           </p>
           <div className="flex justify-center space-x-4">
-            <Link href="/blog">
-              <Button size="lg">Explore Posts</Button>
-            </Link>
+            <Button size="lg" onClick={handleExplorePosts}>
+              Explore Posts
+            </Button>
+            {/* New Fetch button: green, navigates to /fetch */}
+            <Button
+              size="lg"
+              variant="primary"
+              className="bg-green-600 hover:bg-green-700 text-white"
+              onClick={(e) => {
+                e.preventDefault();
+                router.push('/fetch');
+              }}
+            >
+              Fetch
+            </Button>
             <Link href="/login">
               <Button variant="outline" size="lg">Start Writing</Button>
             </Link>
@@ -89,19 +172,32 @@ export default function HomePage() {
 
         {/* Featured Posts */}
         <div className="mb-16">
+        {error && (
+          <div className="text-red-600 text-center p-4 bg-red-50 rounded-lg mb-4">{error}</div>
+        )}
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Latest Posts</h2>
-            <Link href="/blog">
+            <h2 className="text-3xl font-bold text-gray-900">
+              {allPosts.length > 0 ? `All Posts (${allPosts.length})` : 'Latest Posts'}
+            </h2>
+            <Link href="/blog" passHref>
               <Button variant="outline">View All Posts</Button>
             </Link>
           </div>
           
-          <ItemList 
-            items={posts.slice(0, 6)} 
+          <ItemList
+            items={allPosts}
             loading={loading}
             renderItem={(post) => <PostCard key={post.id} post={post} />}
-            emptyMessage="No posts available"
+            emptyMessage={error ? "Error loading posts" : "No posts available"}
           />
+          
+          {allPosts.length > 0 && allPosts.length < totalPosts && (
+            <div className="text-center mt-8">
+              <Button onClick={loadMorePosts} loading={loading} size="lg">
+                Load More Posts
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Features Section */}

@@ -10,6 +10,8 @@ import DashboardPage from "./pages/DashboardPage";
 import DashboardPostsPage from "./pages/DashboardPostsPage";
 import NewPostPage from "./pages/NewPostPage";
 import LoginPage from "./pages/LoginPage";
+import WorkspaceExplorer from "./pages/WorkspaceExplorer";
+import FetchPage from "./pages/FetchPage.tsx";
 
 function App() {
   return (
@@ -29,6 +31,7 @@ function App() {
                 <Route path="/blog/:id" element={<BlogDetailPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
+                <Route path="/fetch" element={<FetchPage />} />
                 <Route path="/dashboard" element={
                   <Authenticated>
                     <DashboardPage />
@@ -44,6 +47,7 @@ function App() {
                     <NewPostPage />
                   </Authenticated>
                 } />
+                <Route path="/workspace-explorer" element={<WorkspaceExplorer />} />
               </Routes>
             </Layout>
           } />

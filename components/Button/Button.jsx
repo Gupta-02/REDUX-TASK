@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { clsx } from 'clsx';
+import clsx from 'clsx';
 
 const Button = forwardRef(({ 
   children, 
@@ -36,6 +36,11 @@ const Button = forwardRef(({
         className
       )}
       disabled={disabled || loading}
+      onClick={e => {
+        if (props.onClick && !loading) {
+          props.onClick(e);
+        }
+      }}
       {...props}
     >
       {loading && (

@@ -36,7 +36,31 @@ export default function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginRequest(formData));
+    // Send login request to dummyjson endpoint
+    fetch('https://dummyjson.com/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: formData.username,
+        password: formData.password,
+        expiresInMins: 30,
+      }),
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        if (data.accessToken && data.refreshToken) {
+          // Proceed: you can dispatch login success or redirect
+          router.push('/dashboard');
+        } else {
+          // Show error for invalid credentials
+          alert('Invalid credentials. Cannot proceed.');
+        }
+      })
+      .catch(() => {
+        alert('Login failed. Please try again.');
+      });
   };
 
   if (isAuthenticated) {
@@ -116,8 +140,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              loading={loading}
-              disabled={loading || !formData.username || !formData.password}
+              disabled={!formData.username || !formData.password}
               className="w-full"
             >
               Sign In

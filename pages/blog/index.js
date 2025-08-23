@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { fetchPostsRequest, searchPostsRequest, clearSearchResults } from '../../store/slices/postsSlice';
 import { debounce } from '../../utils/helpers';
 import Navbar from '../../components/Navbar/Navbar';
 import Button from '../../components/Button/Button';
@@ -57,32 +55,69 @@ const PostCard = ({ post }) => (
 );
 
 export default function BlogPage() {
-  const dispatch = useDispatch();
-  const { posts, searchResults, loading, searchLoading, pagination } = useSelector((state) => state.posts);
-  
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(0);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [pagination, setPagination] = useState({ total: 0, skip: 0, limit: 12 });
 
-  const debouncedSearch = debounce((query) => {
-    if (query.trim()) {
-      dispatch(searchPostsRequest({ query }));
-    } else {
-      dispatch(clearSearchResults());
+  const fetchPosts = useCallback(async (skip = 0, limit = 12) => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch(`https://dummyjson.com/posts?skip=${skip}&limit=${limit}`);
+      if (!res.ok) throw new Error(`Network error: ${res.status}`);
+      const data = await res.json();
+      if (data && Array.isArray(data.posts)) {
+        // On first page replace, otherwise append
+        if (skip === 0) setPosts(data.posts || []);
+        else setPosts(prev => [...prev, ...(data.posts || [])]);
+        setPagination({ total: data.total || 0, skip: data.skip || skip, limit: data.limit || limit });
+      } else {
+        setError('Invalid response from server');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to fetch posts');
+    } finally {
+      setLoading(false);
     }
-  }, 500);
+  }, []);
 
+  // initial load
   useEffect(() => {
-    dispatch(fetchPostsRequest({ skip: 0, limit: 12 }));
-  }, [dispatch]);
+    fetchPosts(0, pagination.limit);
+  }, [fetchPosts]);
+
+  // debounced search using DummyJSON search endpoint
+  const debouncedSearch = useCallback(debounce(async (q) => {
+    if (!q.trim()) {
+      setSearchResults([]);
+      setSearchLoading(false);
+      return;
+    }
+    setSearchLoading(true);
+    try {
+      const res = await fetch(`https://dummyjson.com/posts/search?q=${encodeURIComponent(q)}`);
+      if (!res.ok) throw new Error(`Network error: ${res.status}`);
+      const data = await res.json();
+      setSearchResults(data.posts || []);
+    } catch (err) {
+      console.error('Search error', err);
+    } finally {
+      setSearchLoading(false);
+    }
+  }, 400), []);
 
   useEffect(() => {
     debouncedSearch(searchQuery);
   }, [searchQuery, debouncedSearch]);
 
-  const handleLoadMore = () => {
-    const nextSkip = (currentPage + 1) * 12;
-    dispatch(fetchPostsRequest({ skip: nextSkip, limit: 12 }));
-    setCurrentPage(currentPage + 1);
+  const handleLoadMore = async () => {
+    const nextSkip = posts.length;
+    if (posts.length >= pagination.total) return;
+    await fetchPosts(nextSkip, pagination.limit);
   };
 
   const displayPosts = searchQuery.trim() ? searchResults : posts;
@@ -95,9 +130,9 @@ export default function BlogPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Blog Posts</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">All Blog Posts</h1>
           <p className="text-xl text-gray-600 mb-8">
-            Explore our collection of articles, tutorials, and insights.
+            Discover amazing stories, insights, and ideas from our community of writers.
           </p>
 
           {/* Search */}
@@ -117,7 +152,7 @@ export default function BlogPage() {
           items={displayPosts} 
           loading={isLoading}
           renderItem={(post) => <PostCard key={post.id} post={post} />}
-          emptyMessage={searchQuery.trim() ? "No posts found for your search" : "No posts available"}
+          emptyMessage={searchQuery.trim() ? "No posts found for your search" : (error || "No posts available")}
         />
 
         {/* Load More */}

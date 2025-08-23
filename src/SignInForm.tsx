@@ -1,42 +1,56 @@
 "use client";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export function SignInForm() {
   const { signIn } = useAuthActions();
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
   const [submitting, setSubmitting] = useState(false);
+    const navigate = useNavigate();
 
   return (
     <div className="w-full">
       <form
         className="flex flex-col gap-form-field"
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
           setSubmitting(true);
-          const formData = new FormData(e.target as HTMLFormElement);
-          formData.set("flow", flow);
-          void signIn("password", formData).catch((error) => {
-            let toastTitle = "";
-            if (error.message.includes("Invalid password")) {
-              toastTitle = "Invalid password. Please try again.";
-            } else {
-              toastTitle =
-                flow === "signIn"
-                  ? "Could not sign in, did you mean to sign up?"
-                  : "Could not sign up, did you mean to sign in?";
-            }
-            toast.error(toastTitle);
-            setSubmitting(false);
-          });
+          const form = e.target as HTMLFormElement;
+          const username = (form.username as HTMLInputElement).value;
+          const password = (form.password as HTMLInputElement).value;
+          try {
+            const res = await fetch('https://dummyjson.com/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                username,
+                password
+              })
+            });
+            const data = await res.json();
+            console.log(data);
+              if (data.accessToken && data.refreshToken) {
+                toast.success('Login successful!');
+                localStorage.setItem('accessToken', data.accessToken);
+                localStorage.setItem('refreshToken', data.refreshToken);
+                localStorage.setItem('user', JSON.stringify(data));
+                navigate('/');
+              } else {
+                toast.error('Invalid credentials. Cannot proceed.');
+              }
+          } catch (err) {
+            toast.error('Login failed. Please try again.');
+          }
+          setSubmitting(false);
         }}
       >
         <input
           className="auth-input-field"
-          type="email"
-          name="email"
-          placeholder="Email"
+          type="text"
+          name="username"
+          placeholder="Username"
           required
         />
         <input
