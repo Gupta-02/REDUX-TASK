@@ -19,6 +19,10 @@ UserName:    emilys
 
 Password:   emilyspass
 
+
+<img width="553" height="276" alt="image" src="https://github.com/user-attachments/assets/e1d583a2-8a91-4f55-ba76-3bb05620f21f" />
+
+
 # After Sign In
 <img width="1907" height="445" alt="image" src="https://github.com/user-attachments/assets/d0be1448-6a7d-4616-9c48-4f10a031397c" />
 
