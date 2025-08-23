@@ -1,5 +1,5 @@
 # BlogCraft - Modern Blog Platform
-
+<img width="1502" height="682" alt="image" src="https://github.com/user-attachments/assets/e2157f9b-4e61-44b0-8b84-809467a63297" />
 A modern, full-stack blog platform built with React, TypeScript, Convex, and Tailwind CSS.
 
 ## Features
@@ -12,8 +12,17 @@ A modern, full-stack blog platform built with React, TypeScript, Convex, and Tai
 - 🏷️ **Tagging System** - Organize posts with tags
 - 📱 **Mobile Responsive** - Works perfectly on all devices
 - ⚡ **Real-time Updates** - Live data synchronization
-  <img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/96a429fa-ea6c-4ba1-af05-264589b645cb" />
+<img width="1917" height="142" alt="image" src="https://github.com/user-attachments/assets/15bfee5f-f127-47f3-90c3-4b88c992ede3" />
 
+# Dummy Json Testing
+UserName:emilys
+Password:emilyspass
+
+# After Sign In
+<img width="1907" height="445" alt="image" src="https://github.com/user-attachments/assets/d0be1448-6a7d-4616-9c48-4f10a031397c" />
+
+# Fetch the Data
+<img width="1807" height="913" alt="image" src="https://github.com/user-attachments/assets/92622048-00ad-4eb0-ba41-9f179ab453d4" />
 
 ## Tech Stack
 
