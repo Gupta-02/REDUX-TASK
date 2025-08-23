@@ -12,12 +12,13 @@ A modern, full-stack blog platform built with React, TypeScript, Convex, and Tai
 - 🏷️ **Tagging System** - Organize posts with tags
 - 📱 **Mobile Responsive** - Works perfectly on all devices
 - ⚡ **Real-time Updates** - Live data synchronization
+  <img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/96a429fa-ea6c-4ba1-af05-264589b645cb" />
+
 
 ## Tech Stack
 
 - **Frontend**: React 19, TypeScript, Tailwind CSS
 - **Backend**: Convex (Database + API)
-- **Authentication**: Convex Auth
 - **Routing**: React Router
 - **Build Tool**: Vite
 
@@ -53,14 +54,10 @@ npm run dev
 
 ## Deployment
 
-### Vercel Deployment
-
-1. Push your code to GitHub
-2. Connect your GitHub repository to Vercel
-3. Add environment variables in Vercel dashboard:
-   - `CONVEX_DEPLOYMENT`
-   - `VITE_CONVEX_URL`
+### Vercel Deploymen
 4. Deploy!
+<img width="1915" height="865" alt="image" src="https://github.com/user-attachments/assets/f0c33c32-fe81-4465-9a1b-b8a7a8f7c9b5" />
+
 
 ### Environment Variables
 
@@ -73,29 +70,68 @@ VITE_CONVEX_URL=https://your-deployment.convex.cloud
 ## Project Structure
 
 ```
-src/
-├── components/          # Reusable UI components
-│   ├── Layout/         # Navigation, footer, layout
-│   ├── Blog/           # Blog-specific components
-│   └── UI/             # Generic UI components
-├── pages/              # Page components
-├── lib/                # Utilities and helpers
-└── main.tsx           # App entry point
+my-nextjs-blog/
+├── components/
+│   ├── Button/
+│   ├── Card/
+│   ├── ItemList/
+│   ├── Navbar/
+│   └── Loader/
+├── pages/
+│   ├── api/
+│   │   ├── auth/
+│   │   └── posts/
+│   ├── index.js         # Home page
+│   ├── about.js
+│   ├── contact.js
+│   ├── blog/
+│   │   ├── index.js     # Blog list
+│   │   └── [id].js      # Blog detail
+│   └── login.js
+├── store/
+│   ├── index.js         # Store configuration
+│   ├── slices/
+│   │   ├── authSlice.js
+│   │   └── postsSlice.js
+│   ├── sagas/
+│   │   ├── authSaga.js
+│   │   └── postsSaga.js
+│   └── rootSaga.js
+├── styles/
+│   ├── globals.css
+│   ├── tailwind.css
+│   └── components/
+│       └── ...css
+├── utils/
+│   ├── api.js           # Axios or fetch wrappers
+│   └── helpers.js
+├── services/
+│   ├── authService.js
+│   └── postService.js
+├── public/
+│   └── images/
+├── .env.local           # Environment variables
+├── next.config.js
+├── tailwind.config.js
+├── jsconfig.json        # Path aliases (optional)
+└── README.md
 
-convex/
-├── schema.ts          # Database schema
-├── posts.ts           # Post-related functions
-├── comments.ts        # Comment functions
-├── auth.ts            # Authentication setup
-└── seedData.ts        # Sample data
+
 ```
+<img width="269" height="711" alt="image" src="https://github.com/user-attachments/assets/e58d0ef0-7f2c-4c40-b683-e14e8e4d0a44" />
 
 ## Available Scripts
 
 - `npm run dev` - Start development server
+- <img width="1919" height="602" alt="image" src="https://github.com/user-attachments/assets/2ef004e1-4912-46c1-953d-2b9bc8515df9" />
+
 - `npm run build` - Build for production
+<img width="1005" height="304" alt="image" src="https://github.com/user-attachments/assets/8c3089c5-a360-4606-92fa-4d0ef0381d07" />
+
 - `npm run preview` - Preview production build
+
 - `npm run lint` - Run ESLint
+![Uploading image.png…]()
 
 ## Contributing
 
