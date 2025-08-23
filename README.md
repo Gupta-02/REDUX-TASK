@@ -15,8 +15,9 @@ A modern, full-stack blog platform built with React, TypeScript, Convex, and Tai
 <img width="1917" height="142" alt="image" src="https://github.com/user-attachments/assets/15bfee5f-f127-47f3-90c3-4b88c992ede3" />
 
 # Dummy Json Testing
-UserName:emilys
-Password:emilyspass
+UserName:    emilys
+
+Password:   emilyspass
 
 # After Sign In
 <img width="1907" height="445" alt="image" src="https://github.com/user-attachments/assets/d0be1448-6a7d-4616-9c48-4f10a031397c" />
